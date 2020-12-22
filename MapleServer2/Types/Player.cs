@@ -27,7 +27,7 @@ namespace MapleServer2.Types
         // Job Group, according to jobgroupname.xml
         public int JobGroupId { get; private set; }
         public bool Awakened { get; private set; }
-        public int JobId => JobGroupId * 10 + (Awakened ? 1 : 0);
+        public int JobId => JobGroupId + (Awakened ? 1 : 0);
 
         // Mutable Values
         public int MapId;
@@ -88,10 +88,24 @@ namespace MapleServer2.Types
         public Inventory Inventory;
         public Mailbox Mailbox;
 
-        public static Player Char1(long accountId, long characterId, string name = "Char1") 
+        public static Player Char1(
+            long accountId,
+            long characterId,
+            string name = "",
+            int job = 0,
+            short level = 0,
+            byte gender = 0,
+            string motto = "",
+            string homename = "",
+            long Mesos = 0,
+            long Merets = 0,
+            long ValorToken = 0,
+            long Treva = 0,
+            long Rue = 0,
+            long HaviFruit = 0,
+            long MesoToken = 0,
+            short Storage = 0) 
         {
-            int job = 50; // Archer
-
             PlayerStats stats = PlayerStats.Default();
 
             List<SkillTab> skillTabs = new List<SkillTab>();
@@ -103,11 +117,11 @@ namespace MapleServer2.Types
                 MapId = 2000062,
                 AccountId = accountId,
                 CharacterId = characterId,
-                Level = 70,
+                Level = level,
                 Name = name,
-                Gender = 1,
-                Motto = "Motto",
-                HomeName = "HomeName",
+                Gender = gender,
+                Motto = motto,
+                HomeName = homename,
                 Coord = CoordF.From(2850, 2550, 1800), //Little Harbor
                 //Coord = CoordF.From(500, 500, 15000), // tria
                 JobGroupId = job,
@@ -124,64 +138,19 @@ namespace MapleServer2.Types
                 },
                 Stats = stats,
                 GameOptions = new GameOptions(),
-                Mesos = 200000,
-                Merets = 50,
-                ValorToken = 1,
-                Treva = 2,
-                Rue = 3,
-                HaviFruit = 4,
-                MesoToken = 5,
-                Inventory = new Inventory(48),
+                Mesos = Mesos,
+                Merets = Merets,
+                ValorToken = ValorToken,
+                Treva = Treva,
+                Rue = Rue,
+                HaviFruit = HaviFruit,
+                MesoToken = MesoToken,
+                Inventory = new Inventory(Storage),
                 Mailbox = new Mailbox()
             };
             player.Equips.Add(ItemSlot.RH, Item.TutorialBow(player));
             return player;
         }
-
-        public static Player Char2(long accountId, long characterId, string name = "Char2")
-        {
-            int job = 50;
-
-            PlayerStats stats = PlayerStats.Default();
-
-            List<SkillTab> skillTabs = new List<SkillTab>();
-            skillTabs.Add(XmlParser.ParseSkills(job));
-
-            return new Player
-            {
-                SkillTabs = skillTabs,
-                MapId = 2000062,
-                AccountId = accountId,
-                CharacterId = characterId,
-                Level = 70,
-                Name = name,
-                Gender = 0,
-                Motto = "Motto",
-                HomeName = "HomeName",
-                Coord = CoordF.From(2850, 2550, 1800),
-                JobGroupId = job,
-                SkinColor = new SkinColor()
-                {
-                    Primary = Color.Argb(0xFF, 0xEA, 0xBF, 0xAE)
-                },
-                CreationTime = DateTimeOffset.Now.ToUnixTimeSeconds() + Environment.TickCount,
-                Equips = new Dictionary<ItemSlot, Item> {
-                    { ItemSlot.ER, Item.EarMale() },
-                    { ItemSlot.HR, Item.HairMale() },
-                    { ItemSlot.FA, Item.FaceMale() },
-                    { ItemSlot.FD, Item.FaceDecorationMale() },
-                    { ItemSlot.CL, Item.CloathMale() },
-                    { ItemSlot.SH, Item.ShoesMale() },
-
-                },
-                Stats = stats,
-                GameOptions = new GameOptions(),
-                Mesos = 10,
-                Inventory = new Inventory(48),
-                Mailbox = new Mailbox()
-            };
-        }
-
         public static Player NewCharacter(byte gender, int job, string name, SkinColor skinColor, object equips)
         {
             PlayerStats stats = PlayerStats.Default();
@@ -193,7 +162,7 @@ namespace MapleServer2.Types
             {
                 SkillTabs = skillTabs,
                 AccountId = AccountStorage.DEFAULT_ACCOUNT_ID,
-                CharacterId = GuidGenerator.Long(),
+                CharacterId = GuidGenerator.Int(),
                 CreationTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + AccountStorage.TickCount,
                 Name = name,
                 Gender = gender,
